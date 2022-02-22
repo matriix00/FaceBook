@@ -29,10 +29,25 @@ public class PostViewModel extends ViewModel {
     MutableLiveData<List<PostModel>>posListMutableLiveData= new MutableLiveData<List<PostModel>>();
 
     public void getPosts(){
+        /*Call<List<PostModel>> call = PostsClient.getINSTANCE().getPosts();
+        call.enqueue(new Callback<List<PostModel>>() {
+            @Override
+            public void onResponse(Call<List<PostModel>> call, Response<List<PostModel>> response) {
+                if (response.code()!=200){
+                    Log.e(TAG, "onResponse: no internet");
+                }
+                posListMutableLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<PostModel>> call, Throwable t) {
+                Log.e(TAG, "onFailure: "+t.getMessage() );
+            }
+        });*/
         Single<List<PostModel>> observable = PostsClient.getINSTANCE().getPosts()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-        /* Observer observer = new Observer() {
+       /* Observer observer = new Observer() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
 
@@ -45,7 +60,7 @@ public class PostViewModel extends ViewModel {
 
             @Override
             public void onError(@NonNull Throwable e) {
-
+                Log.e(TAG, "onError: "+e.getMessage());
             }
 
             @Override
@@ -53,7 +68,7 @@ public class PostViewModel extends ViewModel {
 
             }
         };*/
-        observable.subscribe(o->posListMutableLiveData.setValue(o),l-> Log.e(TAG, "getPosts: "+l ));
+        observable.subscribe(o->posListMutableLiveData.setValue(o),l-> Log.e(TAG, "getPosts: error : "+l.getMessage() ));
 
     }
 }
